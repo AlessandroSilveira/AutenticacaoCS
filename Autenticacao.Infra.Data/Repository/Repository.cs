@@ -9,14 +9,13 @@ namespace Autenticacao.Infra.Data.Repository
 {
 	public class Repository<TEntity>: IRepository<TEntity> where TEntity : class
 	{
-		protected Db Db;
+		protected AutenticacaoContext Db;
 		protected DbSet<TEntity> DbSet;
 
-		public Repository()
+		public Repository(AutenticacaoContext db)
 		{
-			Db = new Db();
+			Db = db;
 			DbSet = Db.Set<TEntity>();
-
 		}
 
 		public void Dispose()
@@ -28,9 +27,7 @@ namespace Autenticacao.Infra.Data.Repository
 		public TEntity Adicionar(TEntity obj)
 		{
 			var objReturn =  DbSet.Add(obj);
-			SaveChanges();
 			return objReturn;
-
 		}
 
 		public TEntity ObterPorId(Guid id)
@@ -48,8 +45,7 @@ namespace Autenticacao.Infra.Data.Repository
 			var entry = Db.Entry(obj);
 			DbSet.Attach(obj);
 			entry.State = EntityState.Modified;
-			SaveChanges();
-			return null;
+			return obj;
 		}
 
 		public void Remover(Guid id)

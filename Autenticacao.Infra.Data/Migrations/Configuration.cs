@@ -2,14 +2,14 @@ namespace Autenticacao.Infra.Data.Migrations
 {
 	using System.Data.Entity.Migrations;
 
-	internal sealed class Configuration : DbMigrationsConfiguration<Autenticacao.Infra.Data.Context.Db>
+	internal sealed class Configuration : DbMigrationsConfiguration<Autenticacao.Infra.Data.Context.AutenticacaoContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(Autenticacao.Infra.Data.Context.Db context)
+        protected override void Seed(Autenticacao.Infra.Data.Context.AutenticacaoContext context)
         {
             //  This method will be called after migrating to the latest version.
 

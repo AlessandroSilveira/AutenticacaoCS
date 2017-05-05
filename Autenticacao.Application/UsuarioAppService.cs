@@ -4,14 +4,15 @@ using Autenticacao.Application.Interfaces;
 using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Repository;
 using Autenticacao.Domain.Interfaces.Service;
+using Autenticacao.Infra.Data.Interfaces;
 
 namespace Autenticacao.Application
 {
-	public class UsuarioAppService : IUsuarioAppService
+	public class UsuarioAppService : ApplicationService, IUsuarioAppService
 	{
 		private readonly IUsuarioService _usuarioService;
 
-		public UsuarioAppService(IUsuarioService usuarioService)
+		public UsuarioAppService(IUsuarioService usuarioService, IUnitOfWork uow) : base(uow)
 		{
 			_usuarioService = usuarioService;
 		}
@@ -23,7 +24,10 @@ namespace Autenticacao.Application
 
 		public Usuario Adicionar(Usuario obj)
 		{
-			return _usuarioService.Adicionar(obj);
+			BeginTansaction();
+			var objreturn =  _usuarioService.Adicionar(obj);
+			Commit();
+			return objreturn;
 		}
 
 		public Usuario ObterPorId(Guid id)

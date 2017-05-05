@@ -33,6 +33,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationService.cs" />
     <Compile Include="Interfaces\IAppServiceBase.cs" />
     <Compile Include="Interfaces\ITelefoneAppService.cs" />
     <Compile Include="Interfaces\IUsuarioAppService.cs" />
@@ -44,6 +45,10 @@
     <ProjectReference Include="..\Autenticacao.Domain\Autenticacao.Domain.csproj">
       <Project>{05A33657-B9ED-4293-BCB1-AD1B6F3D0711}</Project>
       <Name>Autenticacao.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Autenticacao.Infra.Data\Autenticacao.Infra.Data.csproj">
+      <Project>{DD77C63D-2EF7-43DE-8875-7620369338D4}</Project>
+      <Name>Autenticacao.Infra.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

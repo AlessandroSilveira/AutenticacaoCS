@@ -3,7 +3,10 @@ using Autenticacao.Application.Interfaces;
 using Autenticacao.Domain.Interfaces.Repository;
 using Autenticacao.Domain.Interfaces.Service;
 using Autenticacao.Domain.Services;
+using Autenticacao.Infra.Data.Context;
+using Autenticacao.Infra.Data.Interfaces;
 using Autenticacao.Infra.Data.Repository;
+using Autenticacao.Infra.Data.UoW;
 using SimpleInjector;
 
 namespace Autenticacao.Infra.CrossCutting.IoC
@@ -14,13 +17,12 @@ namespace Autenticacao.Infra.CrossCutting.IoC
 		{
 			container.Register<IUsuarioAppService,UsuarioAppService>(Lifestyle.Scoped);
 			container.Register<ITelefoneAppService, TelefoneAppService>(Lifestyle.Scoped);
-
 			container.Register<IUsuarioService, UsuarioService>(Lifestyle.Scoped);
 			container.Register<ITelefoneService, TelefoneService>(Lifestyle.Scoped);
-
 			container.Register<IUsuarioRepository, UsuarioRepository>(Lifestyle.Scoped);
 			container.Register<ITelefoneRepository, TelefoneRepository>(Lifestyle.Scoped);
-
+			container.Register<IUnitOfWork, UnitOfWork>(Lifestyle.Scoped);
+			container.Register<AutenticacaoContext>(Lifestyle.Scoped);
 			container.Register(typeof(IRepository<>),typeof(Repository<>));
 		}
 	}

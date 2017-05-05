@@ -6,10 +6,10 @@ using Autenticacao.Infra.Data.EntityConfig;
 
 namespace Autenticacao.Infra.Data.Context
 {
-	public class Db : DbContext
+	public class AutenticacaoContext : DbContext
 	{
-		public Db()
-			: base("db")
+		public AutenticacaoContext()
+			: base("AutenticacaoContext")
 		{
 		}
 
