@@ -3,51 +3,52 @@ using System.Collections.Generic;
 using Autenticacao.Application.Interfaces;
 using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Repository;
+using Autenticacao.Domain.Interfaces.Service;
 
 namespace Autenticacao.Application
 {
 	public class UsuarioAppService : IUsuarioAppService
 	{
-		private readonly IUsuarioRepository UsuarioRepository;
+		private readonly IUsuarioService _usuarioService;
 
-		public UsuarioAppService(IUsuarioRepository usuarioRepository)
+		public UsuarioAppService(IUsuarioService usuarioService)
 		{
-			UsuarioRepository = usuarioRepository;
+			_usuarioService = usuarioService;
 		}
 
 		public void Dispose()
 		{
-			UsuarioRepository.Dispose();
+			_usuarioService.Dispose();
 		}
 
 		public Usuario Adicionar(Usuario obj)
 		{
-			return UsuarioRepository.Adicionar(obj);
+			return _usuarioService.Adicionar(obj);
 		}
 
 		public Usuario ObterPorId(Guid id)
 		{
-			return UsuarioRepository.ObterPorId(id);
+			return _usuarioService.ObterPorId(id);
 		}
 
 		public IEnumerable<Usuario> ObterTodos()
 		{
-			return UsuarioRepository.ObterTodos();
+			return _usuarioService.ObterTodos();
 		}
 
 		public Usuario Atualizar(Usuario obj)
 		{
-			return UsuarioRepository.Atualizar(obj);
+			return _usuarioService.Atualizar(obj);
 		}
 
 		public void Remover(Guid id)
 		{
-			UsuarioRepository.Remover(id);
+			_usuarioService.Remover(id);
 		}
 
 		public int SaveChanges()
 		{
-			return UsuarioRepository.SaveChanges();
+			return _usuarioService.SaveChanges();
 		}
 	}
 }

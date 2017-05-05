@@ -49,6 +49,7 @@ namespace Autenticacao.Infra.Data.Repository
 			DbSet.Attach(obj);
 			entry.State = EntityState.Modified;
 			SaveChanges();
+			return null;
 		}
 
 		public void Remover(Guid id)

@@ -3,52 +3,53 @@ using System.Collections.Generic;
 using Autenticacao.Application.Interfaces;
 using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Repository;
+using Autenticacao.Domain.Interfaces.Service;
 
 namespace Autenticacao.Application
 {
 	public class TelefoneAppService : ITelefoneAppService
 	{
 
-		private readonly ITelefoneRepository _telefoneRepository;
+		private readonly ITelefoneService _telefoneService;
 
-		public TelefoneAppService(ITelefoneRepository telefoneRepository)
+		public TelefoneAppService(ITelefoneService telefoneService)
 		{
-			_telefoneRepository = telefoneRepository;
+			_telefoneService = telefoneService;
 		}
 
 		public void Dispose()
 		{
-			_telefoneRepository.Dispose();
+			_telefoneService.Dispose();
 		}
 
 		public Telefone Adicionar(Telefone obj)
 		{
-			return _telefoneRepository.Adicionar(obj);
+			return _telefoneService.Adicionar(obj);
 		}
 
 		public Telefone ObterPorId(Guid id)
 		{
-			return _telefoneRepository.ObterPorId(id);
+			return _telefoneService.ObterPorId(id);
 		}
 
 		public IEnumerable<Telefone> ObterTodos()
 		{
-			return	_telefoneRepository.ObterTodos();
+			return	_telefoneService.ObterTodos();
 		}
 
 		public Telefone Atualizar(Telefone obj)
 		{
-			return _telefoneRepository.Atualizar(obj);
+			return _telefoneService.Atualizar(obj);
 		}
 
 		public void Remover(Guid id)
 		{
-			_telefoneRepository.Remover(id);
+			_telefoneService.Remover(id);
 		}
 
 		public int SaveChanges()
 		{
-			return	_telefoneRepository.SaveChanges();
+			return	_telefoneService.SaveChanges();
 		}
 	}
 }
