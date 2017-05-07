@@ -53,6 +53,10 @@ namespace Autenticacao.Infra.Data.Repository
 			DbSet.Remove(ObterPorId(id));
 		}
 
+		public TEntity Get(Func<TEntity, bool> expr)
+		{
+			return DbSet.FirstOrDefault(expr);
+		}
 		public int SaveChanges()
 		{
 			return Db.SaveChanges();

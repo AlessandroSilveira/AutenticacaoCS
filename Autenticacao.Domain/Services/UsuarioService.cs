@@ -51,5 +51,38 @@ namespace Autenticacao.Domain.Services
 		{
 			return _usuarioRepository.SaveChanges();
 		}
+
+		public string ValidarTokenDoUsuario(string token, string id)
+		{
+			var usuario= _usuarioRepository.ValidarTokenDoUsuario(token, id);
+			 return ValidadorToken(usuario.Token, usuario);
+		}
+		private static string ValidadorToken(string token, Usuario usuario)
+		{
+			var retorno = "";
+
+			var verificadoNaoAutorizado = new VerificaNaoAutorizado();
+			var verificaSessaoInvalida = new VerificaSessaoInvalida();
+			var retornaValidacao = new RetornoValidacao();
+
+			verificadoNaoAutorizado.Proximo = verificaSessaoInvalida;
+			verificaSessaoInvalida.Proximo = retornaValidacao;
+
+			return verificadoNaoAutorizado.Validacao(token, usuario, retorno);
+		}
+		public bool VerificarEmail(object email)
+		{
+			return _usuarioRepository.VerificarEmail(email);
+		}
+
+		public bool VerificarEmailESenha(string loginEmail, object hash)
+		{
+			return _usuarioRepository.VerificarEmailESenha(loginEmail, hash);
+		}
+
+		public object Autenticar(string loginEmail, object hash)
+		{
+			return _usuarioRepository.Autenticar(loginEmail, hash);
+		}
 	}
 }

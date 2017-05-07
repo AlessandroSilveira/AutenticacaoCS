@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Autenticacao.Application.Interfaces;
 using Autenticacao.Domain.Entities;
-using Autenticacao.Domain.Interfaces.Repository;
 using Autenticacao.Domain.Interfaces.Service;
 using Autenticacao.Infra.Data.Interfaces;
 
@@ -53,6 +52,36 @@ namespace Autenticacao.Application
 		public int SaveChanges()
 		{
 			return _usuarioService.SaveChanges();
+		}
+
+		public bool VerificarEmail(object email)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool VerificarEmailESenha(string loginEmail, object hash)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object Autenticar(string loginEmail, object hash)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string ValidarTokenDoUsuario(string token, string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object Get(Func<object, object> func)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Criar(Usuario novoUsuario)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
