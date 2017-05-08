@@ -25,11 +25,11 @@ namespace Autenticacao.API.Controllers
 			return ValidateToken(id, token);
 		}
 
-		private IHttpActionResult ValidateToken(string id, string token)
+		public IHttpActionResult ValidateToken(string id, string token)
 		{
 			try
 			{
-				var retorno = _usuarioService.ValidarTokenDoUsuario(token, id);
+				var retorno = _usuarioService.ValidarToken(token, id);
 				return !string.IsNullOrWhiteSpace(retorno)
 					? _customMessasge.Create(HttpStatusCode.Unauthorized, retorno) as IHttpActionResult				
 					: Ok(_usuarioService.Get(f=>f.UsuarioId.ToString().Equals(id)));
@@ -40,7 +40,7 @@ namespace Autenticacao.API.Controllers
 			}
 		}
 
-		private static string GetToken(HttpRequestHeaders headers, string token = "")
+		public  string GetToken(HttpRequestHeaders headers, string token = "")
 		{
 			if (!headers.Contains("Authorization")) return token;
 			token = headers.GetValues("Authorization").FirstOrDefault();

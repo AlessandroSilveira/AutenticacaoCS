@@ -26,9 +26,9 @@ namespace Autenticacao.Domain.Services
 			return AppSettings["port"];
 		}
 
-		public string GetBodyEmailRecuperarSenha(string token)
+		public string GetBodyEmailRecuperarSenha(string token,string id)
 		{
-			return "Link para alteração de senha http://localhost:55345/api/recover?id="+token+"";
+			return "Link para alteração de senha http://localhost:55345/api/RecuperarSenha/NovaSenha/?token="+token+"&id="+id+"";
 		}
 	}
 }

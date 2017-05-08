@@ -1,13 +1,9 @@
 ﻿using Autenticacao.API.Models;
-using Autenticacao.Application.Interfaces;
 //using Autenticacao.Infrastructure.Security;
 using System;
 using System.Net;
-using System.Text;
 using System.Web.Http;
 using Autenticacao.Domain.Interfaces.Service;
-using Autenticacao.Domain.Services;
-using Autenticacao.Infra.Data.Interfaces;
 
 
 namespace Autenticacao.API.Controllers

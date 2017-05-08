@@ -32,7 +32,7 @@ namespace Autenticacao.Domain.Services
 		{
 			_enviaEmailBuilder.BuildBody("");
 			_enviaEmailBuilder.BuildBcc("");
-			_enviaEmailBuilder.BuildBody(_configuration.GetBodyEmailRecuperarSenha(_usuario.Token));
+			_enviaEmailBuilder.BuildBody(_configuration.GetBodyEmailRecuperarSenha(_usuario.Token,_usuario.UsuarioId.ToString()));
 			_enviaEmailBuilder.BuildCc("");
 			_enviaEmailBuilder.BuildFrom(_configuration.ObterEmailFrom());
 			_enviaEmailBuilder.BuildPort(_configuration.ObterPortaServidorEmail());

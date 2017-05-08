@@ -10,10 +10,12 @@ namespace Autenticacao.Domain.Services
 	public class UsuarioService : IUsuarioService
 	{
 		private readonly IUsuarioRepository _usuarioRepository;
+		private readonly ICriptografia _criptografia;
 
-		public UsuarioService(IUsuarioRepository usuarioRepository)
+		public UsuarioService(IUsuarioRepository usuarioRepository, ICriptografia criptografia)
 		{
 			_usuarioRepository = usuarioRepository;
+			_criptografia = criptografia;
 		}
 
 		public void Dispose()
@@ -52,7 +54,7 @@ namespace Autenticacao.Domain.Services
 			return _usuarioRepository.SaveChanges();
 		}
 
-		public string ValidarTokenDoUsuario(string token, string id)
+		public string ValidarToken(string token, string id)
 		{
 			var usuario = _usuarioRepository.Get(f => f.UsuarioId.ToString().Equals(id));
 			return ValidadorToken(usuario.Token, usuario);
@@ -105,11 +107,27 @@ namespace Autenticacao.Domain.Services
 
 		private static void EnviarTokenPorEmail(GerenciadorEmail dadosEmail)
 		{
-			using (var message = new MailMessage(dadosEmail.EnviaEmail().GetFrom(), dadosEmail.EnviaEmail().GetTo(), dadosEmail.EnviaEmail().GetSubject(), dadosEmail.EnviaEmail().GetBody()))
+			using (
+				var message = new MailMessage(dadosEmail.EnviaEmail().GetFrom(), dadosEmail.EnviaEmail().GetTo(),
+					dadosEmail.EnviaEmail().GetSubject(), dadosEmail.EnviaEmail().GetBody()))
 			{
 				var client = new SmtpClient(dadosEmail.EnviaEmail().GetSmtpServer()) {UseDefaultCredentials = true};
 				client.Send(message);
 			}
+		}
+
+		public object NovaSenha(string token, string id, string senha)
+		{
+			var usuario = CriarSenhaHash(id, senha);
+			_usuarioRepository.Adicionar(usuario);
+			return usuario;
+		}
+
+		private Usuario CriarSenhaHash(string id, string senha)
+		{
+			var usuario = _usuarioRepository.Get(f => f.UsuarioId.ToString().Equals(id));
+			usuario.Senha = _criptografia.Hash(senha);
+			return usuario;
 		}
 	}
 }

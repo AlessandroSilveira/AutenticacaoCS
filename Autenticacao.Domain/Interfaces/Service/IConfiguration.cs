@@ -6,6 +6,6 @@
 		string ObterSmtp();
 		string ObterEmailFrom();
 		string ObterPortaServidorEmail();
-		string GetBodyEmailRecuperarSenha(string token);
+		string GetBodyEmailRecuperarSenha(string token,string id);
 	}
 }

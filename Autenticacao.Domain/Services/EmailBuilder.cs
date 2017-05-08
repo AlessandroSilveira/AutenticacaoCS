@@ -1,11 +1,9 @@
-﻿using Autenticacao.Domain.Entities;
-using Autenticacao.Domain.Interfaces.Service;
+﻿using Autenticacao.Domain.Interfaces.Service;
 
 namespace Autenticacao.Domain.Services
 {
 	public class EmailBuilder : IEmailBuilder
 	{ 
-
 		public string From { get; set; }
 		public string To { get; set; }
 		public string Cc { get; set; }
@@ -15,7 +13,6 @@ namespace Autenticacao.Domain.Services
 		public string SmtpServer { get; set; }
 		public string BodyFormat { get; set; }
 		public string Port { get; set; }
-
 
 		public string GetFrom()
 		{

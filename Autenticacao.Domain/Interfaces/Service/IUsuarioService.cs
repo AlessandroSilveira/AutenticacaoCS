@@ -12,11 +12,12 @@ namespace Autenticacao.Domain.Interfaces.Service
 		Usuario Atualizar(Usuario obj);
 		void Remover(Guid id);
 		int SaveChanges();
-		string ValidarTokenDoUsuario(string token, string id);
+		string ValidarToken(string token, string id);
 		bool VerificarEmail(object email);
 		bool VerificarEmailESenha(string loginEmail, object hash);
 		object Autenticar(string loginEmail, object hash);
 		object Get(Func<Usuario,bool> func);
 		object EnviarToken(string loginEmail, string hash);
+		object NovaSenha(string token, string id,string senha);
 	}
 }
