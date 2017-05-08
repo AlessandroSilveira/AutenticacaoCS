@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Web.Http;
-using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Service;
 using Autenticacao.Infra.Data.Interfaces;
 
@@ -36,8 +35,8 @@ namespace Autenticacao.API.Controllers
 				var retorno = _usuarioService.ValidarTokenDoUsuario(token, id);
 
 				return !string.IsNullOrWhiteSpace(retorno)
-					? (IHttpActionResult)CustomMessage.Create(HttpStatusCode.Unauthorized, retorno)
-					: Ok(_usuarioService.ObterPorId(id));
+					? CustomMessage.Create(HttpStatusCode.Unauthorized, retorno) as IHttpActionResult				
+					: Ok(_usuarioService.Get(f=>f.UsuarioId.ToString().Equals(id)));
 			}
 			catch (Exception ex)
 			{

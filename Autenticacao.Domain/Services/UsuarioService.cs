@@ -54,7 +54,7 @@ namespace Autenticacao.Domain.Services
 
 		public string ValidarTokenDoUsuario(string token, string id)
 		{
-			var usuario= _usuarioRepository.ValidarTokenDoUsuario(token, id);
+			var usuario = _usuarioRepository.Get(f => f.UsuarioId.ToString().Equals(id));
 			 return ValidadorToken(usuario.Token, usuario);
 		}
 		private static string ValidadorToken(string token, Usuario usuario)
@@ -72,17 +72,25 @@ namespace Autenticacao.Domain.Services
 		}
 		public bool VerificarEmail(object email)
 		{
-			return _usuarioRepository.VerificarEmail(email);
+			return _usuarioRepository.Get(f => f.Email.Equals(email)) != null;
 		}
 
 		public bool VerificarEmailESenha(string loginEmail, object hash)
 		{
-			return _usuarioRepository.VerificarEmailESenha(loginEmail, hash);
+			return _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash))!=null;
 		}
 
 		public object Autenticar(string loginEmail, object hash)
 		{
-			return _usuarioRepository.Autenticar(loginEmail, hash);
+			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
+			usuario.AtualizarDataUltimoLogin();
+			_usuarioRepository.Atualizar(usuario);
+			return usuario;
+		}
+
+		public object Get(Func<Usuario, bool> func)
+		{
+			return _usuarioRepository.Get(func);
 		}
 	}
 }

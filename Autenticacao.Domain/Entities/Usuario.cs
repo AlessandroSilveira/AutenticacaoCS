@@ -33,5 +33,10 @@ namespace Autenticacao.Domain.Entities
 		public string Token { get;  set; }
 
 		public virtual ICollection<Telefone> Telefones { get; set; } = new List<Telefone>();
+
+		public void AtualizarDataUltimoLogin()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
