@@ -1,22 +1,19 @@
-﻿using Autenticacao.API.Models;
-using Autenticacao.Application.Interfaces;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using Autenticacao.Domain.Interfaces.Service;
-using Autenticacao.Infra.Data.Interfaces;
 
 namespace Autenticacao.API.Controllers
 {
-	public class ProfileController : ApiController, IUsuarioAppService
+	public class ProfileController : ApiController
 	{
 		private readonly IUsuarioService _usuarioService;
-		private readonly IUnitOfWork _uow;
-		public ProfileController(IUsuarioService usuarioService, IUnitOfWork uow)
+		private readonly ICustomMessage _customMessasge;
+		public ProfileController(IUsuarioService usuarioService, ICustomMessage customMessasge)
 		{
-			_uow = uow;
+			_customMessasge = customMessasge;
 			_usuarioService = usuarioService;
 		}
 
@@ -33,9 +30,8 @@ namespace Autenticacao.API.Controllers
 			try
 			{
 				var retorno = _usuarioService.ValidarTokenDoUsuario(token, id);
-
 				return !string.IsNullOrWhiteSpace(retorno)
-					? CustomMessage.Create(HttpStatusCode.Unauthorized, retorno) as IHttpActionResult				
+					? _customMessasge.Create(HttpStatusCode.Unauthorized, retorno) as IHttpActionResult				
 					: Ok(_usuarioService.Get(f=>f.UsuarioId.ToString().Equals(id)));
 			}
 			catch (Exception ex)
@@ -49,31 +45,6 @@ namespace Autenticacao.API.Controllers
 			if (!headers.Contains("Authorization")) return token;
 			token = headers.GetValues("Authorization").FirstOrDefault();
 			return token;
-		}
-
-		public bool VerificarEmail(object email)
-		{
-			return _usuarioService.VerificarEmail(email);
-		}
-
-		public bool VerificarEmailESenha(string loginEmail, object hash)
-		{
-			return _usuarioService.VerificarEmailESenha(loginEmail, hash);
-		}
-
-		public object Autenticar(string loginEmail, object hash)
-		{
-			return _usuarioService.Autenticar(loginEmail, hash);
-		}
-
-		public string ValidarTokenDoUsuario(string token, string id)
-		{
-			return _usuarioService.ValidarTokenDoUsuario(token, id);
-		}
-
-		public object Get(Func<object, object> func)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

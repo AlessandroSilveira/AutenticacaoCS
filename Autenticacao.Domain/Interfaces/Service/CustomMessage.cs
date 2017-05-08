@@ -1,19 +1,24 @@
 ﻿using System.Net;
-﻿using Newtonsoft.Json;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Newtonsoft.Json;
 
-
-namespace Autenticacao.API.Models
+namespace Autenticacao.Domain.Interfaces.Service
 {
-	public class CustomMessage : IHttpActionResult
+	public class CustomMessage : ICustomMessage, IHttpActionResult
 
 	{
 		public HttpStatusCode StatusCode { get; private set; }
 		public string Message { get; private set; }
 
+		public CustomMessage(HttpStatusCode statusCode, string message)
+		{
+			StatusCode = statusCode;
+			Message = message;
+		}
+		
 		public static CustomMessage Create(HttpStatusCode statusCode, string message)
 		{
 			return new CustomMessage(statusCode, message);
@@ -30,10 +35,9 @@ namespace Autenticacao.API.Models
 			return Task.FromResult(response);
 		}
 
-		public CustomMessage(HttpStatusCode statusCode, string message)
+		CustomMessage ICustomMessage.Create(HttpStatusCode statusCode, string message)
 		{
-			StatusCode = statusCode;
-			Message = message;
+			return new CustomMessage(statusCode, message);
 		}
 	}
 

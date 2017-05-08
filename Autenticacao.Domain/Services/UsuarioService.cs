@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Repository;
 using Autenticacao.Domain.Interfaces.Service;
@@ -8,7 +9,6 @@ namespace Autenticacao.Domain.Services
 {
 	public class UsuarioService : IUsuarioService
 	{
-
 		private readonly IUsuarioRepository _usuarioRepository;
 
 		public UsuarioService(IUsuarioRepository usuarioRepository)
@@ -55,8 +55,9 @@ namespace Autenticacao.Domain.Services
 		public string ValidarTokenDoUsuario(string token, string id)
 		{
 			var usuario = _usuarioRepository.Get(f => f.UsuarioId.ToString().Equals(id));
-			 return ValidadorToken(usuario.Token, usuario);
+			return ValidadorToken(usuario.Token, usuario);
 		}
+
 		private static string ValidadorToken(string token, Usuario usuario)
 		{
 			var retorno = "";
@@ -70,6 +71,7 @@ namespace Autenticacao.Domain.Services
 
 			return verificadoNaoAutorizado.Validacao(token, usuario, retorno);
 		}
+
 		public bool VerificarEmail(object email)
 		{
 			return _usuarioRepository.Get(f => f.Email.Equals(email)) != null;
@@ -77,7 +79,7 @@ namespace Autenticacao.Domain.Services
 
 		public bool VerificarEmailESenha(string loginEmail, object hash)
 		{
-			return _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash))!=null;
+			return _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash)) != null;
 		}
 
 		public object Autenticar(string loginEmail, object hash)
@@ -91,6 +93,23 @@ namespace Autenticacao.Domain.Services
 		public object Get(Func<Usuario, bool> func)
 		{
 			return _usuarioRepository.Get(func);
+		}
+
+		public object EnviarToken(string loginEmail, string hash)
+		{
+			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
+			var dadosEmail = new GerenciadorEmail(usuario);
+			EnviarTokenPorEmail(dadosEmail);
+			return usuario;
+		}
+
+		private static void EnviarTokenPorEmail(GerenciadorEmail dadosEmail)
+		{
+			using (var message = new MailMessage(dadosEmail.EnviaEmail().GetFrom(), dadosEmail.EnviaEmail().GetTo(), dadosEmail.EnviaEmail().GetSubject(), dadosEmail.EnviaEmail().GetBody()))
+			{
+				var client = new SmtpClient(dadosEmail.EnviaEmail().GetSmtpServer()) {UseDefaultCredentials = true};
+				client.Send(message);
+			}
 		}
 	}
 }

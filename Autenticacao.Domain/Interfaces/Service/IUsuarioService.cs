@@ -17,5 +17,6 @@ namespace Autenticacao.Domain.Interfaces.Service
 		bool VerificarEmailESenha(string loginEmail, object hash);
 		object Autenticar(string loginEmail, object hash);
 		object Get(Func<Usuario,bool> func);
+		object EnviarToken(string loginEmail, string hash);
 	}
 }

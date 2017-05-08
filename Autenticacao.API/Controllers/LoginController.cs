@@ -5,7 +5,9 @@ using System;
 using System.Net;
 using System.Text;
 using System.Web.Http;
-
+using Autenticacao.Domain.Interfaces.Service;
+using Autenticacao.Domain.Services;
+using Autenticacao.Infra.Data.Interfaces;
 
 
 namespace Autenticacao.API.Controllers
@@ -13,11 +15,14 @@ namespace Autenticacao.API.Controllers
 	[RoutePrefix("api/login")]
 	public class LoginController : ApiController
 	{
-		private readonly IUsuarioAppService _usuarioApplication;
-
-		public LoginController(IUsuarioAppService usuarioApplication)
+		private readonly IUsuarioService _usuarioService;
+		private readonly ICustomMessage _customMessasge;
+		private readonly ICriptografia _criptografia;
+		public LoginController(IUsuarioService usuarioService, ICustomMessage customMessasge, ICriptografia criptografia)
 		{
-			_usuarioApplication = usuarioApplication;
+			_customMessasge = customMessasge;
+			_criptografia = criptografia;
+			_usuarioService = usuarioService;
 		}
 
 		// POST: api/login
@@ -26,31 +31,16 @@ namespace Autenticacao.API.Controllers
 		{
 			try
 			{
-				return !_usuarioApplication.VerificarEmail(login.Email)
-					? CustomMessage.Create(HttpStatusCode.Unauthorized, "E-mail informado é inválido.")
-					: (_usuarioApplication.VerificarEmailESenha(login.Email, Criptografia.Hash(login.Senha))
-						? (IHttpActionResult) Ok(_usuarioApplication.Autenticar(login.Email, Criptografia.Hash(login.Senha)))
-						: CustomMessage.Create(HttpStatusCode.Unauthorized, "Usuário e/ou senha inválidos."));
+				return !_usuarioService.VerificarEmail(login.Email)
+					? _customMessasge.Create(HttpStatusCode.Unauthorized, "E-mail informado é inválido.")
+					: (_usuarioService.VerificarEmailESenha(login.Email, _criptografia.Hash(login.Senha))
+						? (IHttpActionResult) Ok(_usuarioService.Autenticar(login.Email, _criptografia.Hash(login.Senha)))
+						: _customMessasge.Create(HttpStatusCode.Unauthorized, "Usuário e/ou senha inválidos."));
 			}
 			catch (Exception ex)
 			{
 				return InternalServerError(ex);
 			}
-		}
-	}
-
-	public class Criptografia
-	{
-		public static string Hash(string senha)
-		{
-			var bytes = new UTF8Encoding().GetBytes(senha);
-			byte[] hashBytes;
-			using (var algorithm = new System.Security.Cryptography.SHA512Managed())
-			{
-				hashBytes = algorithm.ComputeHash(bytes);
-			}
-
-			return Convert.ToBase64String(hashBytes);
 		}
 	}
 }
