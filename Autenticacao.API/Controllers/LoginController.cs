@@ -19,8 +19,8 @@ namespace Autenticacao.API.Controllers
 		//}
 
 		// POST: api/login
-		[HttpPost]
-		public IHttpActionResult Autenticar(string usuario,string senha, string grant_type)
+	
+		public IHttpActionResult Autenticar()
 		{
 			//var usuario = _usuarioService.Get(f => f.Email.Equals(login.Email) && f.Senha.Equals(_criptografia.Hash(login.Senha)));
 			var client = new RestClient("http://localhost:56490/");

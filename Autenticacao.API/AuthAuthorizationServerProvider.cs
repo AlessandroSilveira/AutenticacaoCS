@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
-using Autenticacao.Domain.Interfaces.Service;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Autenticacao.API
