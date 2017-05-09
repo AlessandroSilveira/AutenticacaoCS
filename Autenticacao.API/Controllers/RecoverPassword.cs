@@ -2,10 +2,10 @@
 using System.Web.Http;
 using Autenticacao.API.Models;
 using Autenticacao.Domain.Interfaces.Service;
-using Autenticacao.Infra.Data.Interfaces;
 
 namespace Autenticacao.API.Controllers
 {
+	[RoutePrefix("api/recoverpassword")]
 	public class RecoverPassword : ApiController
 	{
 		private readonly IUsuarioService _usuarioService;

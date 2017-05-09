@@ -4,6 +4,7 @@ using Autenticacao.Domain.Interfaces.Service;
 
 namespace Autenticacao.API.Controllers
 {
+	[RoutePrefix("api/profile")]
 	public class ProfileController : ApiController
 	{
 		private readonly IUsuarioService _usuarioService;

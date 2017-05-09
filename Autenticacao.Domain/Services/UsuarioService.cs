@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Web.Security;
 using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Repository;
 using Autenticacao.Domain.Interfaces.Service;
 using RestSharp;
-using Autenticacao.Domain.Services;
 
 namespace Autenticacao.Domain.Services
 {
@@ -120,7 +117,6 @@ namespace Autenticacao.Domain.Services
 		public Usuario EnviarToken(string loginEmail, string hash)
 		{
 			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
-
 			var token = ObterToken(usuario);
 			var dadosEmail = new GerenciadorEmail(usuario, token);
 			EnviarTokenPorEmail(dadosEmail);

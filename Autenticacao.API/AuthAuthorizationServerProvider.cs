@@ -12,16 +12,16 @@ namespace Autenticacao.API
 	public class AuthAuthorizationServerProvider : OAuthAuthorizationServerProvider
 	{
 
-		private readonly IUsuarioService _usuarioService;
+		//private readonly IUsuarioService _usuarioService;
 
-		public AuthAuthorizationServerProvider(IUsuarioService usuarioService)
-		{
-			_usuarioService = usuarioService;
-		}
+		//public AuthAuthorizationServerProvider(IUsuarioService usuarioService)
+		//{
+		//	_usuarioService = usuarioService;
+		//}
 
-		public AuthAuthorizationServerProvider()
-		{
-		}
+		//public AuthAuthorizationServerProvider()
+		//{
+		//}
 
 		public  async Task ValidateClientAutentication(OAuthValidateClientAuthenticationContext context)
 		{
@@ -37,9 +37,9 @@ namespace Autenticacao.API
 				var user = context.UserName;
 				var password = context.Password;
 
-				var usuario = _usuarioService.Get(f => f.Nome.Equals(user) && f.Senha.Equals(password));
+				//var usuario = _usuarioService.Get(f => f.Nome.Equals(user) && f.Senha.Equals(password));
 
-				if (user != usuario.Nome || password != usuario.Senha)
+				if (user != "Alessandro" || password != "123")
 				{
 					context.SetError("invalid_grant", "Usuário ou senhas inválidos");
 					return;

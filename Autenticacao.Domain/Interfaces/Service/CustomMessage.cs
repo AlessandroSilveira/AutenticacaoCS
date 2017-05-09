@@ -10,8 +10,8 @@ namespace Autenticacao.Domain.Interfaces.Service
 	public class CustomMessage : ICustomMessage, IHttpActionResult
 
 	{
-		public HttpStatusCode StatusCode { get; private set; }
-		public string Message { get; private set; }
+		public HttpStatusCode StatusCode { get; }
+		public string Message { get; }
 
 		public CustomMessage(HttpStatusCode statusCode, string message)
 		{

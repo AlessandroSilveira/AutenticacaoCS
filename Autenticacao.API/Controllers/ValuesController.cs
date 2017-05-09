@@ -4,7 +4,7 @@ namespace Autenticacao.API.Controllers
 {
     public class ValuesController : ApiController
     {
-        [Authorize]
+        [Authorize()]
         public string Get()
         {
             return "O usuário logado é " + User.Identity.Name;

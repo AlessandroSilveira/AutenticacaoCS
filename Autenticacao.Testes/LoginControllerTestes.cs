@@ -27,7 +27,7 @@ namespace Autenticacao.Testes
 			_mockCriptografia = _repository.Create<ICriptografia>();
 			_mockCustomMessage = _repository.Create<ICustomMessage>();
 			_mockUsuarioService = _repository.Create<IUsuarioService>();
-			_loginController = new LoginController(_mockUsuarioService.Object,_mockCustomMessage.Object, _mockCriptografia.Object );
+			//_loginController = new LoginController(_mockUsuarioService.Object,_mockCustomMessage.Object, _mockCriptografia.Object );
 		}
 
 		[Test]
