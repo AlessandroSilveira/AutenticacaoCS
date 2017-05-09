@@ -3,7 +3,10 @@
 using System;
 using System.Net;
 using System.Web.Http;
+using System.Web.Security;
+using Autenticacao.API.ViewModel;
 using Autenticacao.Domain.Interfaces.Service;
+using RestSharp;
 
 
 namespace Autenticacao.API.Controllers
@@ -12,11 +15,9 @@ namespace Autenticacao.API.Controllers
 	public class LoginController : ApiController
 	{
 		private readonly IUsuarioService _usuarioService;
-		private readonly ICustomMessage _customMessasge;
 		private readonly ICriptografia _criptografia;
-		public LoginController(IUsuarioService usuarioService, ICustomMessage customMessasge, ICriptografia criptografia)
+		public LoginController(IUsuarioService usuarioService,ICriptografia criptografia)
 		{
-			_customMessasge = customMessasge;
 			_criptografia = criptografia;
 			_usuarioService = usuarioService;
 		}
@@ -25,18 +26,25 @@ namespace Autenticacao.API.Controllers
 		[HttpPost]
 		public IHttpActionResult Autenticar(Login login)
 		{
-			try
-			{
-				return !_usuarioService.VerificarEmail(login.Email)
-					? _customMessasge.Create(HttpStatusCode.Unauthorized, "E-mail informado é inválido.")
-					: (_usuarioService.VerificarEmailESenha(login.Email, _criptografia.Hash(login.Senha))
-						? (IHttpActionResult) Ok(_usuarioService.Autenticar(login.Email, _criptografia.Hash(login.Senha)))
-						: _customMessasge.Create(HttpStatusCode.Unauthorized, "Usuário e/ou senha inválidos."));
-			}
-			catch (Exception ex)
-			{
-				return InternalServerError(ex);
-			}
+			var usuario = _usuarioService.Get(f => f.Email.Equals(login.Email) && f.Senha.Equals(_criptografia.Hash(login.Senha)));
+			var client = new RestClient("http://localhost:56490/");
+
+			var request = new RestRequest("/token", Method.POST);
+			request.AddParameter("grant_type", "password");
+			request.AddParameter("username",usuario.Nome );
+			request.AddParameter("password",usuario.Senha );
+
+			IRestResponse<TokenViewModel> response = client.Execute<TokenViewModel>(request);
+			var token = response.Data.AccessToken;
+
+			if (!string.IsNullOrEmpty(token))
+				FormsAuthentication.SetAuthCookie(token, false);
+
+			return Ok(token);
 		}
 	}
+
+
+
 }
+

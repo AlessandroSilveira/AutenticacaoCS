@@ -14,8 +14,9 @@ namespace Autenticacao.Domain.Services
 		private readonly EnviaEmailBuilder _enviaEmailBuilder;
 		private readonly IConfiguration _configuration;
 		private Usuario _usuario;
+		private string _token;
 
-		public GerenciadorEmail(Usuario usuario, EnviaEmailBuilder enviaEmailBuilder, IConfiguration configuration)
+		public GerenciadorEmail(Usuario usuario, EnviaEmailBuilder enviaEmailBuilder, IConfiguration configuration, string token)
 		{
 			_usuario = usuario;
 			_enviaEmailBuilder = enviaEmailBuilder;
@@ -23,16 +24,17 @@ namespace Autenticacao.Domain.Services
 			
 		}
 
-		public GerenciadorEmail(Usuario usuario)
+		public GerenciadorEmail(Usuario usuario, string token)
 		{
 			this._usuario = usuario;
+			this._token = token;
 		}
 
 		public IEmailBuilder EnviaEmail()
 		{
 			_enviaEmailBuilder.BuildBody("");
 			_enviaEmailBuilder.BuildBcc("");
-			_enviaEmailBuilder.BuildBody(_configuration.GetBodyEmailRecuperarSenha(_usuario.Token,_usuario.UsuarioId.ToString()));
+			_enviaEmailBuilder.BuildBody(_configuration.GetBodyEmailRecuperarSenha(_token, _usuario.UsuarioId.ToString()));
 			_enviaEmailBuilder.BuildCc("");
 			_enviaEmailBuilder.BuildFrom(_configuration.ObterEmailFrom());
 			_enviaEmailBuilder.BuildPort(_configuration.ObterPortaServidorEmail());

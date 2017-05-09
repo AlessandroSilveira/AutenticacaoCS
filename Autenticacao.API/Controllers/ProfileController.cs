@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net;
 using System.Web.Http;
 using Autenticacao.Domain.Interfaces.Service;
 
@@ -11,6 +8,7 @@ namespace Autenticacao.API.Controllers
 	{
 		private readonly IUsuarioService _usuarioService;
 		private readonly ICustomMessage _customMessasge;
+
 		public ProfileController(IUsuarioService usuarioService, ICustomMessage customMessasge)
 		{
 			_customMessasge = customMessasge;
@@ -20,31 +18,18 @@ namespace Autenticacao.API.Controllers
 		// GET: api/Profile/5
 		public IHttpActionResult Get(string id)
 		{
-			var headers = Request.Headers;
-			var token = GetToken(headers);
+			var usuario = _usuarioService.Get(f => f.UsuarioId.ToString().Equals(id.ToString()));
+			var token = _usuarioService.ObterToken(usuario);
 			return ValidateToken(id, token);
 		}
 
 		public IHttpActionResult ValidateToken(string id, string token)
 		{
-			try
-			{
-				var retorno = _usuarioService.ValidarToken(token, id);
-				return !string.IsNullOrWhiteSpace(retorno)
-					? _customMessasge.Create(HttpStatusCode.Unauthorized, retorno) as IHttpActionResult				
-					: Ok(_usuarioService.Get(f=>f.UsuarioId.ToString().Equals(id)));
-			}
-			catch (Exception ex)
-			{
-				return InternalServerError(ex);
-			}
-		}
-
-		public  string GetToken(HttpRequestHeaders headers, string token = "")
-		{
-			if (!headers.Contains("Authorization")) return token;
-			token = headers.GetValues("Authorization").FirstOrDefault();
-			return token;
+			var usuario = _usuarioService.Get(f => f.UsuarioId.ToString().Equals(id.ToString()));
+			var retorno = _usuarioService.Autenticar(usuario.Email, usuario.Senha);
+			return retorno
+				? _customMessasge.Create(HttpStatusCode.Unauthorized, "Token  Inválido") as IHttpActionResult
+				: Ok(_usuarioService.Get(f => f.UsuarioId.ToString().Equals(id)));
 		}
 	}
 }

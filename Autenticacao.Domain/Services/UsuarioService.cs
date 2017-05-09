@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.Mail;
+using System.Web.Security;
 using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Repository;
 using Autenticacao.Domain.Interfaces.Service;
+using RestSharp;
+using Autenticacao.Domain.Services;
 
 namespace Autenticacao.Domain.Services
 {
@@ -63,11 +68,9 @@ namespace Autenticacao.Domain.Services
 		private static string ValidadorToken(string token, Usuario usuario)
 		{
 			var retorno = "";
-
 			var verificadoNaoAutorizado = new VerificaNaoAutorizado();
 			var verificaSessaoInvalida = new VerificaSessaoInvalida();
 			var retornaValidacao = new RetornoValidacao();
-
 			verificadoNaoAutorizado.Proximo = verificaSessaoInvalida;
 			verificaSessaoInvalida.Proximo = retornaValidacao;
 
@@ -84,23 +87,42 @@ namespace Autenticacao.Domain.Services
 			return _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash)) != null;
 		}
 
-		public object Autenticar(string loginEmail, object hash)
+		public bool Autenticar(string loginEmail, object hash)
 		{
-			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
-			usuario.AtualizarDataUltimoLogin();
-			_usuarioRepository.Atualizar(usuario);
-			return usuario;
+			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(_criptografia.Hash(hash.ToString())));
+			var token = ObterToken(usuario);
+			if (!string.IsNullOrEmpty(token))
+				FormsAuthentication.SetAuthCookie(token, false);
+			else
+				return false;
+
+			return true;
 		}
 
-		public object Get(Func<Usuario, bool> func)
+		public string ObterToken(Usuario usuario)
+		{
+			var client = new RestClient("http://localhost:56490/");
+			var request = new RestRequest("/api/token", Method.POST);
+			request.AddParameter("grant_type", "password");
+			request.AddParameter("username", usuario.Nome);
+			request.AddParameter("password", usuario.Senha);
+
+			IRestResponse<TokenData> response = client.Execute<TokenData>(request);
+			var token = response.Data.AccessToken;
+			return token;
+		}
+
+		public Usuario Get(Func<Usuario, bool> func)
 		{
 			return _usuarioRepository.Get(func);
 		}
 
-		public object EnviarToken(string loginEmail, string hash)
+		public Usuario EnviarToken(string loginEmail, string hash)
 		{
 			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
-			var dadosEmail = new GerenciadorEmail(usuario);
+
+			var token = ObterToken(usuario);
+			var dadosEmail = new GerenciadorEmail(usuario, token);
 			EnviarTokenPorEmail(dadosEmail);
 			return usuario;
 		}
@@ -116,7 +138,7 @@ namespace Autenticacao.Domain.Services
 			}
 		}
 
-		public object NovaSenha(string token, string id, string senha)
+		public Usuario NovaSenha(string token, string id, string senha)
 		{
 			var usuario = CriarSenhaHash(id, senha);
 			_usuarioRepository.Adicionar(usuario);

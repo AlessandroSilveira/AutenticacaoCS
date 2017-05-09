@@ -22,7 +22,7 @@ namespace Autenticacao.API
 
 			app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
 			app.UseWebApi(config);
-			//https://www.youtube.com/watch?v=c4Fden4jptc
+		
 		}
 
 		public static void ConfigureWebApi(HttpConfiguration config)

@@ -4,18 +4,30 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
-using Autenticacao.Domain.Entities;
+using Autenticacao.Domain.Interfaces.Service;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Autenticacao.API
 {
 	public class AuthAuthorizationServerProvider : OAuthAuthorizationServerProvider
 	{
-		public async Task ValidateClientAutentication(OAuthValidateClientAuthenticationContext context)
+
+		private readonly IUsuarioService _usuarioService;
+
+		public AuthAuthorizationServerProvider(IUsuarioService usuarioService)
+		{
+			_usuarioService = usuarioService;
+		}
+
+		public AuthAuthorizationServerProvider()
+		{
+		}
+
+		public  async Task ValidateClientAutentication(OAuthValidateClientAuthenticationContext context)
 		{
 			context.Validated();
 		}
-
+		
 		public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
 		{
 			context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin",new []{"*"});
@@ -25,28 +37,29 @@ namespace Autenticacao.API
 				var user = context.UserName;
 				var password = context.Password;
 
-				if (user != "Alessandro" || password != "Alessandro")
+				var usuario = _usuarioService.Get(f => f.Nome.Equals(user) && f.Senha.Equals(password));
+
+				if (user != usuario.Nome || password != usuario.Senha)
 				{
-					context.SetError("invalid_grant","Usuário ou senhas inválidos");
+					context.SetError("invalid_grant", "Usuário ou senhas inválidos");
 					return;
 				}
 
-				var Identity = new ClaimsIdentity(context.Options.AuthenticationType);
+				var identity = new ClaimsIdentity(context.Options.AuthenticationType);
 				
-				Identity.AddClaim(new Claim(ClaimTypes.Name,user));
+				identity.AddClaim(new Claim(ClaimTypes.Name,user));
 
-				var roles  = new List<string>();
-				roles.Add("User");
+				var roles = new List<string> {"User"};
 
 				foreach (var role in roles)
 				{
-					Identity.AddClaim(new Claim(ClaimTypes.Role,role));
+					identity.AddClaim(new Claim(ClaimTypes.Role,role));
 				}
 
-				GenericPrincipal principal = new GenericPrincipal(Identity, roles.ToArray());
+				GenericPrincipal principal = new GenericPrincipal(identity, roles.ToArray());
 				Thread.CurrentPrincipal = principal;
 
-				context.Validated(Identity);
+				context.Validated(identity);
 			}
 			catch (Exception e)
 			{
