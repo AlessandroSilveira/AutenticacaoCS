@@ -10,19 +10,19 @@ namespace Autenticacao.API.Controllers
 	[RoutePrefix("api/login")]
 	public class LoginController : ApiController
 	{
-		//private readonly IUsuarioService _usuarioService;
-		//private readonly ICriptografia _criptografia;
-		//public LoginController(IUsuarioService usuarioService,ICriptografia criptografia)
-		//{
-		//	_criptografia = criptografia;
-		//	_usuarioService = usuarioService;
-		//}
+		private readonly IUsuarioService _usuarioService;
+		private readonly ICriptografia _criptografia;
+		public LoginController(IUsuarioService usuarioService, ICriptografia criptografia)
+		{
+			_criptografia = criptografia;
+			_usuarioService = usuarioService;
+		}
 
 		// POST: api/login
 		[HttpPost]
-		public IHttpActionResult Autenticar(string username,string password)
+		public IHttpActionResult Autenticar(Login login)
 		{
-			//var usuario = _usuarioService.Get(f => f.Email.Equals(login.Email) && f.Senha.Equals(_criptografia.Hash(login.Senha)));
+			var usuario = _usuarioService.Get(f => f.Email.Equals(login.Email) && f.Senha.Equals(_criptografia.Hash(login.Senha)));
 			var client = new RestClient("http://localhost:56490/");
 
 			var request = new RestRequest("/api/security/token", Method.POST);
