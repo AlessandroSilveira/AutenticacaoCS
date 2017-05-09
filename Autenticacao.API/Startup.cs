@@ -18,7 +18,11 @@ namespace Autenticacao.API
 			var config = new HttpConfiguration();
 
 			ConfigureWebApi(config);
-			
+			ConfigureOAuth(app);
+
+			app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+			app.UseWebApi(config);
+			//https://www.youtube.com/watch?v=c4Fden4jptc
 		}
 
 		public static void ConfigureWebApi(HttpConfiguration config)
@@ -41,19 +45,15 @@ namespace Autenticacao.API
 				defaults: new { id = RouteParameter.Optional }
 			);
 		}
-
-	
-
 		
-
 		public void ConfigureOAuth(IAppBuilder app)
 		{
-			var oAuthServerOptions = new OAuthAuthorizationServerOptions()
+			OAuthAuthorizationServerOptions oAuthServerOptions = new OAuthAuthorizationServerOptions()
 			{
 				AllowInsecureHttp = true,
 				TokenEndpointPath = new PathString("/token"),
 				AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
-				Provider = null // new SimpleAuthorizationServerProvider()
+				Provider = new AuthAuthorizationServerProvider()
 			};
 
 			// Token Generation
