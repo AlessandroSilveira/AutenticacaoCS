@@ -82,7 +82,7 @@ namespace Autenticacao.API
 			OAuthAuthorizationServerOptions oAuthServerOptions = new OAuthAuthorizationServerOptions()
 			{
 				AllowInsecureHttp = true,
-				TokenEndpointPath = new PathString("/api/security/token"),
+				TokenEndpointPath = new PathString("/api/token"),
 				AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
 				Provider = new AuthAuthorizationServerProvider()
 			};

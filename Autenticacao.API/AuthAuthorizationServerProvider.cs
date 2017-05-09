@@ -23,7 +23,7 @@ namespace Autenticacao.API
 		//{
 		//}
 
-		public  async Task ValidateClientAutentication(OAuthValidateClientAuthenticationContext context)
+		public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
 		{
 			context.Validated();
 		}
