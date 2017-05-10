@@ -6,6 +6,7 @@ using Autenticacao.Infra.Data.EntityConfig;
 
 namespace Autenticacao.Infra.Data.Context
 {
+	
 	public class AutenticacaoContext : DbContext
 	{
 		public AutenticacaoContext()
@@ -13,8 +14,8 @@ namespace Autenticacao.Infra.Data.Context
 		{
 		}
 
-		public virtual DbSet<Usuario> Usuario { get; set; }
-		public virtual DbSet<Telefone> Telefone { get; set; }
+		public virtual IDbSet<Usuario> Usuario { get; set; }
+		public virtual IDbSet<Telefone> Telefone { get; set; }
 
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -28,6 +28,7 @@ namespace Autenticacao.API.Controllers
 					: CustomMessage.Create(HttpStatusCode.Unauthorized, "Usuário e/ou senha inválidos.");
 			}
 			return CustomMessage.Create(HttpStatusCode.Unauthorized, "E-mail informado é inválido.");
+			//https://github.com/prrandrade/Estudos_AspNetWebApi
 		}
 	}
 }
