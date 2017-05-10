@@ -34,6 +34,14 @@
       <HintPath>..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Moq, Version=4.7.10.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.7.10\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
@@ -47,6 +55,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -67,6 +76,8 @@
     <Compile Include="LoginControllerTestes.cs" />
     <Compile Include="ProfileControllerTestes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecoverPasswordControllerTest.cs" />
+    <Compile Include="SingUpControllerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -77,9 +88,17 @@
       <Project>{B3B49828-442A-4E9F-958B-D858D499CD5D}</Project>
       <Name>Autenticacao.API</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Autenticacao.Application\Autenticacao.Application.csproj">
+      <Project>{474af7f3-f83a-4351-a81f-e5f6790dd7ed}</Project>
+      <Name>Autenticacao.Application</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Autenticacao.Domain\Autenticacao.Domain.csproj">
       <Project>{05A33657-B9ED-4293-BCB1-AD1B6F3D0711}</Project>
       <Name>Autenticacao.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Autenticacao.Infra.Data\Autenticacao.Infra.Data.csproj">
+      <Project>{DD77C63D-2EF7-43DE-8875-7620369338D4}</Project>
+      <Name>Autenticacao.Infra.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

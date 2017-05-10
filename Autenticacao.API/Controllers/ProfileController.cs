@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Web.Http;
+using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Service;
 
 namespace Autenticacao.API.Controllers
@@ -17,20 +19,19 @@ namespace Autenticacao.API.Controllers
 		}
 
 		// GET: api/Profile/5
-		public IHttpActionResult Get(string id)
+		public IHttpActionResult Get(Guid id)
 		{
-			var usuario = _usuarioService.Get(f => f.UsuarioId.ToString().Equals(id.ToString()));
+			var usuario = _usuarioService.ObterPorId(id);
 			var token = _usuarioService.ObterToken(usuario);
-			return ValidateToken(id, token);
+			return ValidateToken(id, token, usuario);
 		}
 
-		public IHttpActionResult ValidateToken(string id, string token)
+		public IHttpActionResult ValidateToken(Guid id, string token, Usuario usuario)
 		{
-			var usuario = _usuarioService.Get(f => f.UsuarioId.ToString().Equals(id.ToString()));
 			var retorno = _usuarioService.Autenticar(usuario.Email, usuario.Senha);
 			return retorno
 				? _customMessasge.Create(HttpStatusCode.Unauthorized, "Token  Inválido") as IHttpActionResult
-				: Ok(_usuarioService.Get(f => f.UsuarioId.ToString().Equals(id)));
+				: Ok(_usuarioService.ObterPorId(id));
 		}
 	}
 }

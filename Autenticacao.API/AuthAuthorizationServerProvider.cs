@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using Autenticacao.Domain.Interfaces.Service;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Autenticacao.API
@@ -11,16 +12,16 @@ namespace Autenticacao.API
 	public class AuthAuthorizationServerProvider : OAuthAuthorizationServerProvider
 	{
 
-		//private readonly IUsuarioService _usuarioService;
+		private readonly IUsuarioService _usuarioService;
 
-		//public AuthAuthorizationServerProvider(IUsuarioService usuarioService)
-		//{
-		//	_usuarioService = usuarioService;
-		//}
+		public AuthAuthorizationServerProvider(IUsuarioService usuarioService)
+		{
+			_usuarioService = usuarioService;
+		}
 
-		//public AuthAuthorizationServerProvider()
-		//{
-		//}
+		public AuthAuthorizationServerProvider()
+		{
+		}
 
 		public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
 		{
@@ -36,9 +37,9 @@ namespace Autenticacao.API
 				var user = context.UserName;
 				var password = context.Password;
 
-				//var usuario = _usuarioService.Get(f => f.Nome.Equals(user) && f.Senha.Equals(password));
+				var usuario = _usuarioService.Get(f => f.Nome.Equals(user) && f.Senha.Equals(password));
 
-				if (user != "Alessandro" || password != "123")
+				if (user != usuario.Nome || password != usuario.Senha)
 				{
 					context.SetError("invalid_grant", "Usuário ou senhas inválidos");
 					return;

@@ -16,7 +16,7 @@ namespace Autenticacao.Testes
 	{
 		private MockRepository _repository;
 		private Mock<IUsuarioService> _mockUsuarioService;
-		private Mock<ICustomMessage> _mockCustomMessage;
+		
 		private Mock<ICriptografia> _mockCriptografia;
 		private LoginController _loginController;
 
@@ -25,9 +25,9 @@ namespace Autenticacao.Testes
 		{
 			_repository = new MockRepository(MockBehavior.Strict);
 			_mockCriptografia = _repository.Create<ICriptografia>();
-			_mockCustomMessage = _repository.Create<ICustomMessage>();
+		
 			_mockUsuarioService = _repository.Create<IUsuarioService>();
-			//_loginController = new LoginController(_mockUsuarioService.Object,_mockCustomMessage.Object, _mockCriptografia.Object );
+			_loginController = new LoginController(_mockUsuarioService.Object, _mockCriptografia.Object );
 		}
 
 		[Test]
@@ -40,8 +40,9 @@ namespace Autenticacao.Testes
 				Email = "teste@teste.com"
 			};
 
-			_mockCustomMessage.Setup(a=>a.Create(HttpStatusCode.Unauthorized, It.IsAny<string>())).Returns(It.IsAny<CustomMessage>()).Verifiable();
+			
 			_mockUsuarioService.Setup(a=>a.VerificarEmail(login.Email)).Returns(It.IsAny<bool>()).Verifiable();
+			
 
 			//Act
 			_loginController.Autenticar(login);

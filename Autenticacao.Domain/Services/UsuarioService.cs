@@ -87,13 +87,20 @@ namespace Autenticacao.Domain.Services
 		public bool Autenticar(string loginEmail, object hash)
 		{
 			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(_criptografia.Hash(hash.ToString())));
-			var token = ObterToken(usuario);
+			var token = AutalizarToken(usuario);
 			if (!string.IsNullOrEmpty(token))
 				FormsAuthentication.SetAuthCookie(token, false);
 			else
 				return false;
-
 			return true;
+		}
+
+		private string AutalizarToken(Usuario usuario)
+		{
+			var token = ObterToken(usuario);
+			usuario.Token = token;
+			_usuarioRepository.Atualizar(usuario);
+			return token;
 		}
 
 		public string ObterToken(Usuario usuario)
@@ -101,9 +108,8 @@ namespace Autenticacao.Domain.Services
 			var client = new RestClient("http://localhost:56490/");
 			var request = new RestRequest("/api/token", Method.POST);
 			request.AddParameter("grant_type", "password");
-			request.AddParameter("username", usuario.Nome);
+			request.AddParameter("usuario", usuario.Nome);
 			request.AddParameter("password", usuario.Senha);
-
 			IRestResponse<TokenData> response = client.Execute<TokenData>(request);
 			var token = response.Data.AccessToken;
 			return token;
@@ -114,9 +120,9 @@ namespace Autenticacao.Domain.Services
 			return _usuarioRepository.Get(func);
 		}
 
-		public Usuario EnviarToken(string loginEmail, string hash)
+		public Usuario EnviarToken(string loginEmail)
 		{
-			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
+			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail));
 			var token = ObterToken(usuario);
 			var dadosEmail = new GerenciadorEmail(usuario, token);
 			EnviarTokenPorEmail(dadosEmail);
@@ -134,10 +140,10 @@ namespace Autenticacao.Domain.Services
 			}
 		}
 
-		public Usuario NovaSenha(string token, string id, string senha)
+		public Usuario NovaSenha(Usuario usuario)
 		{
-			var usuario = CriarSenhaHash(id, senha);
-			_usuarioRepository.Adicionar(usuario);
+			var usuario2 = CriarSenhaHash(usuario.UsuarioId.ToString(),usuario.Senha);
+			_usuarioRepository.Adicionar(usuario2);
 			return usuario;
 		}
 

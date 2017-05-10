@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web.Http;
+using System.Collections.Generic;
 using Autenticacao.API.Controllers;
+using Autenticacao.Domain.Entities;
+using Autenticacao.Domain.Interfaces.Repository;
 using Autenticacao.Domain.Interfaces.Service;
 using Moq;
 using NUnit.Framework;
@@ -11,12 +10,12 @@ using NUnit.Framework;
 namespace Autenticacao.Testes
 {
 	[TestFixture]
-	class ProfileControllerTestes
+	public class ProfileControllerTestes
 	{
 		private MockRepository _repository;
 		private Mock<IUsuarioService> _mockUsuarioService;
 		private Mock<ICustomMessage> _mockCustomMessage;
-		
+		private Mock<IUsuarioRepository> _mockUsuarioRepository;
 		private ProfileController _profileController;
 
 		[SetUp]
@@ -25,24 +24,34 @@ namespace Autenticacao.Testes
 			_repository = new MockRepository(MockBehavior.Strict);
 			_mockCustomMessage = _repository.Create<ICustomMessage>();
 			_mockUsuarioService = _repository.Create<IUsuarioService>();
+			_mockUsuarioRepository = _repository.Create<IUsuarioRepository>();
 			_profileController = new ProfileController(_mockUsuarioService.Object, _mockCustomMessage.Object);
-			
 		}
 
-		//[Test]
-		//public void TestGet()
-		//{
-		//	Guid UsuarioId = new Guid();
+		[Test]
+		public void TestGet()
+		{
+			Guid id = new Guid("a566c99b-1ca7-48f9-a85e-68efd6ce2c2f");
+			var usuario = new Usuario()
+			{
+				UsuarioId = id,
+				Nome = "Ale",
+				Senha = "1234567890",
+				Email = "teste@teste.com",
+				Token = "123",
+				Telefones = new List<Telefone>()
+			};
 			
-		//	var Request = new HttpRequestMessage();
-		//	var headers = Request.Headers;
+			_mockUsuarioService.Setup(a=>a.ObterPorId(id)).Returns(It.IsAny<Usuario>()).Verifiable();
+			_mockUsuarioRepository.Setup(a=>a.ObterPorId(id)).Returns(It.IsAny<Usuario>()).Verifiable();
+			_mockUsuarioService.Setup(a=>a.ObterToken(usuario)).Returns(It.IsAny<string>()).Verifiable();
+		
+			_mockUsuarioService.Setup(a=>a.Autenticar(usuario.Email,usuario.Senha)).Returns(It.IsAny<bool>()).Verifiable();
 
-		//	var token = _profileController.GetToken(headers);
-		//	_profileController.ValidateToken(UsuarioId.ToString(), token);
+			_profileController.Get(id);
 
-		//	_profileController.Get(UsuarioId.ToString());
-
-		//}
+			_repository.VerifyAll();
+		}
 		[Test]
 		public void TestValidaToken()
 		{

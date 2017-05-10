@@ -47,6 +47,5 @@ namespace Autenticacao.API.Controllers
 				return InternalServerError(ex);
 			}
 		}
-		
 	}
 }

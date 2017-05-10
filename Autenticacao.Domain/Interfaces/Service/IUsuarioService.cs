@@ -18,8 +18,8 @@ namespace Autenticacao.Domain.Interfaces.Service
 		bool VerificarEmailESenha(string loginEmail, object hash);
 		bool Autenticar(string loginEmail, object hash);
 		Usuario Get(Func<Usuario,bool> func);
-		Usuario EnviarToken(string loginEmail, string hash);
-		Usuario NovaSenha(string token, string id,string senha);
+		Usuario EnviarToken(string loginEmail);
+		Usuario NovaSenha(Usuario usuario);
 		string ObterToken(Usuario usuario);
 	}
 }
