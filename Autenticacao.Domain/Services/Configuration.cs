@@ -6,14 +6,6 @@ namespace Autenticacao.Domain.Services
 {
 	public class Configuration : IConfiguration
 	{
-		private IUsuarioService _usuarioService;
-
-		public Configuration(IUsuarioService usuarioService)
-		{
-			_usuarioService = usuarioService;
-		}
-
-
 		public int ObterTempoLogado()
 		{
 			return Convert.ToInt32(AppSettings["tempoLogado"]);
@@ -36,7 +28,7 @@ namespace Autenticacao.Domain.Services
 
 		public string GetBodyEmailRecuperarSenha(string token,string id)
 		{
-			return "Link para alteração de senha http://localhost:55345/api/RecuperarSenha/NovaSenha/?token="+token+ "&id="+id;
+			return "Link para alteração de senha http://localhost:55345/api/newpassword/?token="+token+ "&id="+id;
 		}
 	}
 }

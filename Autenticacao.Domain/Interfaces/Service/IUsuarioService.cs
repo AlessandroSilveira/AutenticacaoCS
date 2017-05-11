@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using Autenticacao.Domain.Entities;
 
 namespace Autenticacao.Domain.Interfaces.Service
@@ -19,7 +18,7 @@ namespace Autenticacao.Domain.Interfaces.Service
 		bool Autenticar(string loginEmail, object hash);
 		Usuario Get(Func<Usuario,bool> func);
 		Usuario EnviarToken(string loginEmail);
-		Usuario NovaSenha(Usuario usuario);
+		bool NovaSenha(Usuario usuario);
 		string ObterToken(Usuario usuario);
 	}
 }

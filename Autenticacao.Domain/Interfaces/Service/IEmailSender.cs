@@ -1,6 +1,4 @@
-﻿using Autenticacao.Domain.Services;
-
-namespace Autenticacao.Domain.Interfaces.Service
+﻿namespace Autenticacao.Domain.Interfaces.Service
 {
 	public interface IEmailSender
 	{
@@ -14,6 +12,5 @@ namespace Autenticacao.Domain.Interfaces.Service
 		void BuildPort(string port);
 
 		IEmailBuilder GetEmail();
-
 	}
 }

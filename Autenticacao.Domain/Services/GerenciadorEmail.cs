@@ -1,49 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autenticacao.Domain.Entities;
+﻿using Autenticacao.Domain.Entities;
 using Autenticacao.Domain.Interfaces.Service;
 
 namespace Autenticacao.Domain.Services
 {
-	public class GerenciadorEmail
+	public class GerenciadorEmail : IGerenciadorEmail
 	{
-		
-		private readonly EnviaEmailBuilder _enviaEmailBuilder;
+		public EnviaEmailBuilder Builder { get; }
 		private readonly IConfiguration _configuration;
-		private Usuario _usuario;
-		private string _token;
 
-		public GerenciadorEmail(Usuario usuario, EnviaEmailBuilder enviaEmailBuilder, IConfiguration configuration, string token)
+		public GerenciadorEmail(IConfiguration configuration, EnviaEmailBuilder builder)
 		{
-			_usuario = usuario;
-			_enviaEmailBuilder = enviaEmailBuilder;
 			_configuration = configuration;
-			
+			Builder = builder;
 		}
 
-		public GerenciadorEmail(Usuario usuario, string token)
+		//public GerenciadorEmail(Usuario usuario, string token)
+		//{
+		//	this._usuario = usuario;
+		//	this._token = token;
+		//}
+
+		public EnviaEmailBuilder EnviarEmail(Usuario usuario, string token)
 		{
-			this._usuario = usuario;
-			this._token = token;
+			Builder.BuildBody("");
+			Builder.BuildBcc("");
+			Builder.BuildBody(_configuration.GetBodyEmailRecuperarSenha(token, usuario.UsuarioId.ToString()));
+			Builder.BuildCc("");
+			Builder.BuildFrom(_configuration.ObterEmailFrom());
+			Builder.BuildPort(_configuration.ObterPortaServidorEmail());
+			Builder.BuildSmtpServer(_configuration.ObterSmtp());
+			Builder.BuildTo(usuario.Email);
+
+			//var email = Builder.GetEmail();
+			return Builder;
 		}
-
-		public IEmailBuilder EnviaEmail()
-		{
-			_enviaEmailBuilder.BuildBody("");
-			_enviaEmailBuilder.BuildBcc("");
-			_enviaEmailBuilder.BuildBody(_configuration.GetBodyEmailRecuperarSenha(_token, _usuario.UsuarioId.ToString()));
-			_enviaEmailBuilder.BuildCc("");
-			_enviaEmailBuilder.BuildFrom(_configuration.ObterEmailFrom());
-			_enviaEmailBuilder.BuildPort(_configuration.ObterPortaServidorEmail());
-			_enviaEmailBuilder.BuildSmtpServer(_configuration.ObterSmtp());
-			_enviaEmailBuilder.BuildTo(_usuario.Email);
-
-			var email =  _enviaEmailBuilder.GetEmail();
-			return email;
-		}
-
 	}
 }

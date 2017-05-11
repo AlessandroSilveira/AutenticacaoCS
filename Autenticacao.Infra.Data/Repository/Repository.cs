@@ -27,6 +27,7 @@ namespace Autenticacao.Infra.Data.Repository
 		public TEntity Adicionar(TEntity obj)
 		{
 			var objReturn =  DbSet.Add(obj);
+			SaveChanges();
 			return objReturn;
 		}
 
@@ -45,12 +46,14 @@ namespace Autenticacao.Infra.Data.Repository
 			var entry = Db.Entry(obj);
 			DbSet.Attach(obj);
 			entry.State = EntityState.Modified;
+			SaveChanges();
 			return obj;
 		}
 
 		public void Remover(Guid id)
 		{
 			DbSet.Remove(ObterPorId(id));
+			
 		}
 
 		public TEntity Get(Func<TEntity, bool> expr)

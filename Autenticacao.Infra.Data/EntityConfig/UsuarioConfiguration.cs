@@ -26,7 +26,7 @@ namespace Autenticacao.Infra.Data.EntityConfig
 
 			Property(c => c.Token)
 				.IsRequired()
-				.HasMaxLength(250);
+				.HasMaxLength(500);
 
 			ToTable("Usuarios");
 		}

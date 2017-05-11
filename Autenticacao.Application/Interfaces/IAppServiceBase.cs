@@ -11,5 +11,6 @@ namespace Autenticacao.Application.Interfaces
 		IEnumerable<TEntity> GetAll();
 		void Update(TEntity obj);
 		void Delete(TEntity obj);
+		int SaveChanges();
 	}
 }

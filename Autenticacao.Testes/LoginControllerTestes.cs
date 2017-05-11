@@ -45,7 +45,7 @@ namespace Autenticacao.Testes
 			
 
 			//Act
-			_loginController.Autenticar(login);
+			//_loginController.Autenticar(login);
 
 			//Assert
 			_repository.VerifyAll();

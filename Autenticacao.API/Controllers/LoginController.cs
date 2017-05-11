@@ -1,9 +1,7 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Web.Http;
 using Autenticacao.API.Models;
 using Autenticacao.Domain.Interfaces.Service;
-using RestSharp;
 
 namespace Autenticacao.API.Controllers
 {
@@ -19,17 +17,20 @@ namespace Autenticacao.API.Controllers
 		}
 
 		// POST: api/login
-		public IHttpActionResult Autenticar(Login login)
+		[HttpPost]
+		public IHttpActionResult Autenticar(string Email, string Senha)
 		{
-			if (_usuarioService.VerificarEmail(login.Email))
+			var login = new Login()
 			{
-				return _usuarioService.VerificarEmailESenha(login.Email, _criptografia.Hash(login.Senha))
+				Email = Email,
+				Senha = Senha
+			};
+
+			return _usuarioService.VerificarEmail(login.Email)
+				? (_usuarioService.VerificarEmailESenha(login.Email, _criptografia.Hash(login.Senha))
 					? (IHttpActionResult) Ok(_usuarioService.Autenticar(login.Email, _criptografia.Hash(login.Senha)))
-					: CustomMessage.Create(HttpStatusCode.Unauthorized, "Usuário e/ou senha inválidos.");
-			}
-			return CustomMessage.Create(HttpStatusCode.Unauthorized, "E-mail informado é inválido.");
-			//https://github.com/prrandrade/Estudos_AspNetWebApi
-			//https://www.youtube.com/watch?v=RwpaFVS60fc
+					: CustomMessage.Create(HttpStatusCode.Unauthorized, "Usuário e/ou senha inválidos."))
+				: CustomMessage.Create(HttpStatusCode.Unauthorized, "E-mail informado é inválido.");
 		}
 	}
 }

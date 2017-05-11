@@ -41,6 +41,7 @@
     <Compile Include="Interfaces\Service\ICustomMessage.cs" />
     <Compile Include="Interfaces\Service\IEmailBuilder.cs" />
     <Compile Include="Interfaces\Service\IEmailSender.cs" />
+    <Compile Include="Interfaces\Service\IGerenciadorEmail.cs" />
     <Compile Include="Interfaces\Service\IItensValidacao.cs" />
     <Compile Include="Interfaces\Service\IJwt.cs" />
     <Compile Include="Interfaces\Service\ITelefoneService.cs" />

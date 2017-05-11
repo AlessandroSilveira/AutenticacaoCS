@@ -13,11 +13,13 @@ namespace Autenticacao.Domain.Services
 	{
 		private readonly IUsuarioRepository _usuarioRepository;
 		private readonly ICriptografia _criptografia;
+		private readonly IGerenciadorEmail _gerenciadorEmail;
 
-		public UsuarioService(IUsuarioRepository usuarioRepository, ICriptografia criptografia)
+		public UsuarioService(IUsuarioRepository usuarioRepository, ICriptografia criptografia, IGerenciadorEmail gerenciadorEmail)
 		{
 			_usuarioRepository = usuarioRepository;
 			_criptografia = criptografia;
+			_gerenciadorEmail = gerenciadorEmail;
 		}
 
 		public void Dispose()
@@ -86,13 +88,19 @@ namespace Autenticacao.Domain.Services
 
 		public bool Autenticar(string loginEmail, object hash)
 		{
-			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(_criptografia.Hash(hash.ToString())));
-			var token = AutalizarToken(usuario);
-			if (!string.IsNullOrEmpty(token))
+			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
+			if (usuario != null)
+			{
+				var token = AutalizarToken(usuario);
+				if (string.IsNullOrEmpty(token))
+					return false;
 				FormsAuthentication.SetAuthCookie(token, false);
+				return true;
+			}
 			else
+			{
 				return false;
-			return true;
+			}
 		}
 
 		private string AutalizarToken(Usuario usuario)
@@ -108,7 +116,7 @@ namespace Autenticacao.Domain.Services
 			var client = new RestClient("http://localhost:56490/");
 			var request = new RestRequest("/api/token", Method.POST);
 			request.AddParameter("grant_type", "password");
-			request.AddParameter("usuario", usuario.Nome);
+			request.AddParameter("username", usuario.Nome);
 			request.AddParameter("password", usuario.Senha);
 			IRestResponse<TokenData> response = client.Execute<TokenData>(request);
 			var token = response.Data.AccessToken;
@@ -123,28 +131,36 @@ namespace Autenticacao.Domain.Services
 		public Usuario EnviarToken(string loginEmail)
 		{
 			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail));
-			var token = ObterToken(usuario);
-			var dadosEmail = new GerenciadorEmail(usuario, token);
+			 usuario.Token = ObterToken(usuario);
+			var dadosEmail = _gerenciadorEmail.EnviarEmail(usuario, usuario.Token);
+			_usuarioRepository.Atualizar(usuario);
 			EnviarTokenPorEmail(dadosEmail);
 			return usuario;
 		}
 
-		private static void EnviarTokenPorEmail(GerenciadorEmail dadosEmail)
+		private static void EnviarTokenPorEmail(EnviaEmailBuilder dadosEmail)
 		{
 			using (
-				var message = new MailMessage(dadosEmail.EnviaEmail().GetFrom(), dadosEmail.EnviaEmail().GetTo(),
-					dadosEmail.EnviaEmail().GetSubject(), dadosEmail.EnviaEmail().GetBody()))
+				var message = new MailMessage(dadosEmail.From, dadosEmail.To,
+					dadosEmail.Subject, dadosEmail.Body))
 			{
-				var client = new SmtpClient(dadosEmail.EnviaEmail().GetSmtpServer()) {UseDefaultCredentials = true};
+				var client = new SmtpClient(dadosEmail.SmtpServer) { UseDefaultCredentials = true };
 				client.Send(message);
 			}
 		}
 
-		public Usuario NovaSenha(Usuario usuario)
+		public bool NovaSenha(Usuario usuario)
 		{
-			var usuario2 = CriarSenhaHash(usuario.UsuarioId.ToString(),usuario.Senha);
-			_usuarioRepository.Adicionar(usuario2);
-			return usuario;
+			try
+			{
+				var usuario2 = CriarSenhaHash(usuario.UsuarioId.ToString(), usuario.Senha);
+				_usuarioRepository.Adicionar(usuario2);
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
 		}
 
 		private Usuario CriarSenhaHash(string id, string senha)
