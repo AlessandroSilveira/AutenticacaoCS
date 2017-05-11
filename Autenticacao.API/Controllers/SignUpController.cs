@@ -15,6 +15,7 @@ namespace Autenticacao.API.Controllers
 		private readonly ICriptografia _criptografia;
 		private readonly ICustomMessage _customMessasge;
 		private readonly IJwt _jwt;
+
 		public SignUpController(IUsuarioService usuarioService, ICustomMessage customMessasge, ICriptografia criptografia, IJwt jwt, IUnitOfWork uokOfWork)
 		{
 			_customMessasge = customMessasge;

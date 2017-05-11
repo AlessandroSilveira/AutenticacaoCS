@@ -20,7 +20,5 @@ namespace Autenticacao.Application
 		{
 			_unitOfWork.Commit();
 		}
-
-
 	}
 }

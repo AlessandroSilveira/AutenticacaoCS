@@ -10,7 +10,6 @@ namespace Autenticacao.API
 {
 	public class AuthAuthorizationServerProvider : OAuthAuthorizationServerProvider
 	{
-
 		public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
 		{
 			context.Validated();

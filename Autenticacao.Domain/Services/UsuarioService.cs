@@ -14,12 +14,14 @@ namespace Autenticacao.Domain.Services
 		private readonly IUsuarioRepository _usuarioRepository;
 		private readonly ICriptografia _criptografia;
 		private readonly IGerenciadorEmail _gerenciadorEmail;
+		private readonly IConfiguration _configuration;
 
-		public UsuarioService(IUsuarioRepository usuarioRepository, ICriptografia criptografia, IGerenciadorEmail gerenciadorEmail)
+		public UsuarioService(IUsuarioRepository usuarioRepository, ICriptografia criptografia, IGerenciadorEmail gerenciadorEmail, IConfiguration configuration)
 		{
 			_usuarioRepository = usuarioRepository;
 			_criptografia = criptografia;
 			_gerenciadorEmail = gerenciadorEmail;
+			_configuration = configuration;
 		}
 
 		public void Dispose()
@@ -61,19 +63,20 @@ namespace Autenticacao.Domain.Services
 		public string ValidarToken(string token, string id)
 		{
 			var usuario = _usuarioRepository.Get(f => f.UsuarioId.ToString().Equals(id));
-			return ValidadorToken(usuario.Token, usuario);
+			return ValidadorToken(usuario.Token, usuario, _configuration.ObterTempoLogado());
 		}
 
-		private static string ValidadorToken(string token, Usuario usuario)
+		private static string ValidadorToken(string token, Usuario usuario, int tempologado)
 		{
 			var retorno = "";
+
 			var verificadoNaoAutorizado = new VerificaNaoAutorizado();
 			var verificaSessaoInvalida = new VerificaSessaoInvalida();
 			var retornaValidacao = new RetornoValidacao();
 			verificadoNaoAutorizado.Proximo = verificaSessaoInvalida;
 			verificaSessaoInvalida.Proximo = retornaValidacao;
 
-			return verificadoNaoAutorizado.Validacao(token, usuario, retorno);
+			return verificadoNaoAutorizado.Validacao(token, usuario, retorno, tempologado);
 		}
 
 		public bool VerificarEmail(object email)
@@ -89,18 +92,12 @@ namespace Autenticacao.Domain.Services
 		public bool Autenticar(string loginEmail, object hash)
 		{
 			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail) && f.Senha.Equals(hash));
-			if (usuario != null)
-			{
-				var token = AutalizarToken(usuario);
-				if (string.IsNullOrEmpty(token))
-					return false;
-				FormsAuthentication.SetAuthCookie(token, false);
-				return true;
-			}
-			else
-			{
+			if (usuario == null) return false;
+			var token = AutalizarToken(usuario);
+			if (string.IsNullOrEmpty(token))
 				return false;
-			}
+			FormsAuthentication.SetAuthCookie(token, false);
+			return true;
 		}
 
 		private string AutalizarToken(Usuario usuario)
@@ -131,7 +128,7 @@ namespace Autenticacao.Domain.Services
 		public Usuario EnviarToken(string loginEmail)
 		{
 			var usuario = _usuarioRepository.Get(f => f.Email.Equals(loginEmail));
-			 usuario.Token = ObterToken(usuario);
+			usuario.Token = ObterToken(usuario);
 			var dadosEmail = _gerenciadorEmail.EnviarEmail(usuario, usuario.Token);
 			_usuarioRepository.Atualizar(usuario);
 			EnviarTokenPorEmail(dadosEmail);

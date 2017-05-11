@@ -5,12 +5,6 @@ namespace Autenticacao.Domain.Services
 {
 	public class EnviaEmailBuilder :  IEmailSender
 	{
-		//private Usuario usuario;
-
-		//public EnviaEmailBuilder(string @from, string to, string cc, string bcc, string subject, string body, string smtpServer, string bodyFormat, string port, Usuario usuario) : base(@from, to, cc, bcc, subject, body, smtpServer, bodyFormat, port)
-		//{
-		//	this.usuario = usuario;
-		//}
 		public string From { get; set; }
 		public string To { get; set; }
 		public string Cc { get; set; }
@@ -64,7 +58,6 @@ namespace Autenticacao.Domain.Services
 		public IEmailBuilder GetEmail()
 		{
 			return new EmailBuilder();
-
 		}
 	}
 }

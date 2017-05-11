@@ -56,22 +56,22 @@ namespace Autenticacao.Application
 
 		public bool VerificarEmail(object email)
 		{
-			throw new NotImplementedException();
+			return _usuarioService.VerificarEmail(email);
 		}
 
 		public bool VerificarEmailESenha(string loginEmail, object hash)
 		{
-			throw new NotImplementedException();
+			return _usuarioService.VerificarEmailESenha(loginEmail, hash);
 		}
 
 		public object Autenticar(string loginEmail, object hash)
 		{
-			throw new NotImplementedException();
+			return _usuarioService.Autenticar(loginEmail, hash);
 		}
 
 		public string ValidarTokenDoUsuario(string token, string id)
 		{
-			throw new NotImplementedException();
+			return _usuarioService.ValidarToken(token, id);
 		}
 
 		public object Get(Func<object, object> func)
@@ -81,7 +81,7 @@ namespace Autenticacao.Application
 
 		public void Criar(Usuario novoUsuario)
 		{
-			throw new NotImplementedException();
+			_usuarioService.Adicionar(novoUsuario);
 		}
 	}
 }

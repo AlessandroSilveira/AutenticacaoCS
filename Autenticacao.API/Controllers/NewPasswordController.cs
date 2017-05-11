@@ -17,7 +17,6 @@ namespace Autenticacao.API.Controllers
 			_usuarioService = usuarioService;
 		}
 
-
 		[HttpPost]
 		public IHttpActionResult NovaSenha(string token, string id, string senha)
 		{

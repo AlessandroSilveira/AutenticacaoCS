@@ -13,13 +13,6 @@ namespace Autenticacao.Domain.Services
 			_configuration = configuration;
 			Builder = builder;
 		}
-
-		//public GerenciadorEmail(Usuario usuario, string token)
-		//{
-		//	this._usuario = usuario;
-		//	this._token = token;
-		//}
-
 		public EnviaEmailBuilder EnviarEmail(Usuario usuario, string token)
 		{
 			Builder.BuildBody("");
@@ -30,8 +23,6 @@ namespace Autenticacao.Domain.Services
 			Builder.BuildPort(_configuration.ObterPortaServidorEmail());
 			Builder.BuildSmtpServer(_configuration.ObterSmtp());
 			Builder.BuildTo(usuario.Email);
-
-			//var email = Builder.GetEmail();
 			return Builder;
 		}
 	}
