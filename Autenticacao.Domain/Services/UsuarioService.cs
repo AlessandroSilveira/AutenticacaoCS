@@ -62,11 +62,11 @@ namespace Autenticacao.Domain.Services
 
 		public string ValidarToken(string token, string id)
 		{
-			var usuario = _usuarioRepository.Get(f => f.UsuarioId.ToString().Equals(id));
+			var usuario = _usuarioRepository.ObterPorId(new Guid(id));
 			return ValidadorToken(usuario.Token, usuario, _configuration.ObterTempoLogado());
 		}
 
-		private static string ValidadorToken(string token, Usuario usuario, int tempologado)
+		public  string ValidadorToken(string token, Usuario usuario, int tempologado)
 		{
 			var retorno = "";
 
@@ -100,7 +100,7 @@ namespace Autenticacao.Domain.Services
 			return true;
 		}
 
-		private string AutalizarToken(Usuario usuario)
+		public string AutalizarToken(Usuario usuario)
 		{
 			var token = ObterToken(usuario);
 			usuario.Token = token;

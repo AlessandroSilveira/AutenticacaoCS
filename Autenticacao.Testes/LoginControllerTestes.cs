@@ -1,13 +1,7 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Autenticacao.API.Controllers;
-using Autenticacao.API.Models;
+﻿using Autenticacao.API.Controllers;
 using Autenticacao.Domain.Interfaces.Service;
-using Autenticacao.Domain.Services;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Autenticacao.Testes
 {
@@ -16,7 +10,6 @@ namespace Autenticacao.Testes
 	{
 		private MockRepository _repository;
 		private Mock<IUsuarioService> _mockUsuarioService;
-		
 		private Mock<ICriptografia> _mockCriptografia;
 		private LoginController _loginController;
 
@@ -25,7 +18,6 @@ namespace Autenticacao.Testes
 		{
 			_repository = new MockRepository(MockBehavior.Strict);
 			_mockCriptografia = _repository.Create<ICriptografia>();
-		
 			_mockUsuarioService = _repository.Create<IUsuarioService>();
 			_loginController = new LoginController(_mockUsuarioService.Object, _mockCriptografia.Object );
 		}
@@ -34,22 +26,17 @@ namespace Autenticacao.Testes
 		public void LoginAutenticar()
 		{
 			//Arrange
-			var login = new Login()
-			{
-				Senha = "1234567890",
-				Email = "teste@teste.com"
-			};
-
+			var Senha = "1234567890";
+			var Email = "teste@teste.com";
 			
-			_mockUsuarioService.Setup(a=>a.VerificarEmail(login.Email)).Returns(It.IsAny<bool>()).Verifiable();
+			_mockUsuarioService.Setup(a=>a.VerificarEmail(Email)).Returns(It.IsAny<bool>()).Verifiable();
 			
 
 			//Act
-			//_loginController.Autenticar(login);
+			_loginController.Autenticar(Email,Senha);
 
 			//Assert
 			_repository.VerifyAll();
-
 		}
 	}
 }

@@ -7,7 +7,6 @@ using Autenticacao.Domain.Interfaces.Service;
 using Autenticacao.Infra.Data.Interfaces;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Autenticacao.Testes
 {
